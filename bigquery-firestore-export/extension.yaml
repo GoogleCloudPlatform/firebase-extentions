@@ -281,7 +281,8 @@ params:
     label: Firestore Collection
     description: >-
       What's the top-level Firestore Collection to store transfer configs, run
-      metadata, and query output?
+      metadata, and query output? This collection should either be empty or
+      contain configs previously created by this extension.
     type: string
     validationRegex: '^[^/]+(/[^/]+/[^/]+)*$'
     validationErrorMessage: Must be a valid Cloud Firestore Collection

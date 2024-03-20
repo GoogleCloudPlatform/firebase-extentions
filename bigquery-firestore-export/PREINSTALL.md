@@ -1,6 +1,6 @@
 This extension helps you set up automated, scheduled jobs that run BigQuery queries and subsequently export the query results to Firestore. A common use case for this extension is to present application-driven analytics, like product engagement metrics or election results, from Firestore, using batch data originally stored and aggregated by BigQuery.
 
-To use the extension, configure a BigQuery query to execute along with a schedule to execute the query. Each scheduled BigQuery query run will result in: 
+To use the extension, configure a BigQuery query to execute along with a schedule to execute the query. Each scheduled BigQuery query run will result in:
 
 - A summary of each BigQuery query run, stored in a “runId” document.
 - Actual rows from BigQuery query results, stored as individual Firestore documents in an “output” subcollection under the “runId” document (i.e. transferConfigs/<configId>/runs/<runId>/output).
@@ -49,6 +49,6 @@ This extension uses other Firebase and Google Cloud Platform services, which hav
 - BigQuery
 - Cloud Functions (See FAQs)
 
-> ⚠️ *Note: The extension does not automatically delete the BigQuery Transfer Config (scheduled query) when you uninstall the extension.*
+> ⚠️ _Note: The extension does not automatically delete the BigQuery Transfer Config (scheduled query) when you uninstall the extension._
 
-> *BigQuery charges by data processed, so your project will continue to incur costs until you manually delete the scheduled query. You can manage your scheduled queries directly in Cloud Console.*
+> _BigQuery charges by data processed, so your project will continue to incur costs until you manually delete the scheduled query. You can manage your scheduled queries directly in Cloud Console._
