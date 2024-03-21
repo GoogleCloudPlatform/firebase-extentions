@@ -1,3 +1,7 @@
+## Version 0.0.7
+
+feature: use Scheduled Backups to a base
+
 ## Version 0.0.6
 
 fixed - deployment, documentation and scripting updates

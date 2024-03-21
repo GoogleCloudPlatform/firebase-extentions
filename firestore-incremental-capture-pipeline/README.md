@@ -5,7 +5,7 @@ To debug this pipeline locally, use the `DirectRunner`:
 ```bash
 mvn compile exec:java \
     -Dexec.mainClass=com.pipeline.RestorationPipeline \
-    -Dexec.args='--timestamp=1697740800 --firestoreCollectionId="test" --firestoreDb="test" --tempLocation="gs://PROJECT_ID.appspot.com" --project="PROJECT_ID"'
+    -Dexec.args='--timestamp=1707436800 --firestoreCollectionId="*" --firestoreDb="test" --tempLocation="gs://PROJECT_ID.appspot.com" --project="PROJECT_ID" --bigQueryTable=changelog --bigQueryDataset=sync --firestoreSecondaryDb=test --firestorePrimaryDb=(default)'
 ```
 
 ### Arguments

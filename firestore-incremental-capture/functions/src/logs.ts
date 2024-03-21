@@ -47,3 +47,8 @@ export const tableCreationError = (table: string, message: string) => {
 export const datasetCeationError = (dataset: string) => {
   logger.log(`error creatign dataset: ${dataset}`);
 };
+
+export enum LogMessage {
+  INVALID_TIMESTAMP = '"timestamp" field is missing or in the future, please ensure that you are sending a valid timestamp in the request body, is in seconds since epoch and is not in the future.',
+  INVALID_DEST_ID = '"destinationDatabaseId" field is missing, please ensure that you are sending a valid database ID in the request body.',
+}

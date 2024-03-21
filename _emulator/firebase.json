@@ -1,5 +1,7 @@
 {
-  "extensions": {},
+  "extensions": {
+    "firestore-incremental-capture": "../firestore-incremental-capture"
+  },
   "storage": {
     "rules": "storage.rules"
   },

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: firestore-incremental-capture
-version: 0.0.6
+version: 0.0.7
 specVersion: v1beta
 
 icon: icon.png
@@ -23,12 +23,15 @@ description:
   Offers a cost-effective, flexible disaster recovery mechanism for Firestore.
 
 license: Apache-2.0
+billingRequired: true
 
 author:
   authorName: Google Cloud
   url: https://cloud.google.com/
 
 contributors:
+  - authorName: Mais Alheraki
+    email: mais@invertase.io
   - authorName: Invertase
     email: oss@invertase.io
     url: https://github.com/invertase
@@ -46,20 +49,26 @@ apis:
   - apiName: dataflow.googleapis.com
     reason: Running dataflow jobs
 
+  - apiName: run.googleapis.com
+    reason: Powers v2 Cloud Functions
+
 roles:
-  - role: datastore.user
-    reason: Allows the extension to write updates to the database.
+  - role: datastore.owner
+    reason:
+      Allows the extension to write updates to the database, and manage
+      scheduled backups.
 
   - role: bigquery.dataEditor
     reason: Allows the creation of BQ jobs to import Firestore backups.
 
-  # - role: dataflow.developer
-  #   reason: Allows this extension to create and run dataflow jobs.
+  - role: dataflow.developer
+    reason: Allows this extension to create and run dataflow jobs.
+
+  - role: storage.admin
+    reason: Allows this extension to read Dataflow templates & write to GCS.
 
   # - role: artifactregistry.writer
   #   reason: Allows this extension to write to the artifact registry.
-
-billingRequired: true
 
 resources:
   - name: runInitialSetup
@@ -75,7 +84,7 @@ resources:
 
   - name: syncData
     type: firebaseextensions.v1beta.function
-    description: Enqueues a task to sync data to BigQuery
+    description: Syncs data changelog to BigQuery
     properties:
       runtime: nodejs18
       location: ${LOCATION}
@@ -83,36 +92,40 @@ resources:
         eventType: providers/cloud.firestore/eventTypes/document.write
         resource: projects/${param:PROJECT_ID}/databases/(default)/documents/${param:SYNC_COLLECTION_PATH}/{docId}
 
-  - name: syncDataTask
-    type: firebaseextensions.v1beta.function
-    description: >-
-      Distributed cloud task for syncing data to BigQuery
-    properties:
-      availableMemoryMb: 512
-      location: ${LOCATION}
-      runtime: nodejs18
-      timeout: 540s
-      taskQueueTrigger: {}
-
-  - name: onHttpRunRestoration
+  - name: triggerRestorationJob
     type: firebaseextensions.v1beta.function
     description: >-
       Starts a new restoration task
     properties:
       location: ${LOCATION}
       runtime: nodejs18
-      httpsTrigger: {}
+      eventTrigger:
+        eventType: providers/cloud.firestore/eventTypes/document.create
+        resource: projects/${param:PROJECT_ID}/databases/(default)/documents/_ext-${param:EXT_INSTANCE_ID}/restore/jobs/{docId}
 
-  # TODO change to a Firestore trigger
-  - name: onBackupRestore
+  - name: checkScheduledBackupState
     type: firebaseextensions.v1beta.function
     description: >-
-      Exports data from storage to a pre-defined Firestore instance.
+      Checks if a scheduled backup is done to trigger the DataFlow job
+    properties:
+      availableMemoryMb: 512
+      runtime: nodejs18
+      location: ${LOCATION}
+      taskQueueTrigger: {}
+
+  - name: updateDataflowStatus
+    type: firebaseextensions.v1beta.v2function
+    description: >-
+      Updates the status of the DataFlow job in Firestore.
     properties:
       location: ${LOCATION}
-      runtime: nodejs18
-      availableMemoryMb: 1024
-      taskQueueTrigger: {}
+      buildConfig:
+        runtime: nodejs18
+      eventTrigger:
+        eventType: google.cloud.dataflow.job.v1beta3.statusChanged
+        # eventFilters:
+        #   - attribute: job
+        #     value: projects/${param:PROJECT_ID}/locations/${LOCATION}/jobs/${param:EXT_INSTANCE_ID}-*
 
 params:
   - param: LOCATION
@@ -205,10 +218,9 @@ params:
   - param: BACKUP_INSTANCE_ID
     label: Backup instance Id
     description: >
-      The name of the Firestore instance to backup the database to.
-    example: my-backup
-    validationRegex: '^[a-zA-Z][a-zA-Z0-9-]{2,61}[a-zA-Z0-9]$'
-    validationErrorMessage: Enter a valid instance id
+      The name of the Firestore instance to capture changes from. This is your
+      Firestore instance which you want to backup.
+    default: (default)
     required: true
 
 lifecycleEvents:

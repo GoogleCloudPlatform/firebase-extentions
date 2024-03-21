@@ -1,7 +1,5 @@
 This extension provides an automated, incremental backup solution that extends native Firestore capabilities. Generally, you should consider [Firestore’s native Point in Time Recovery](https://firebase.google.com/docs/firestore/use-pitr) and [Scheduled Backups](https://cloud.google.com/firestore/docs/backups) solutions as a first option. However, if those features don’t meet your needs, this extension can be a more flexible alternative.
 
-This extension provides an automated, incremental backup solution that extends native Firestore capabilities. Generally, you should consider Firestore’s native Point in Time Recovery and Scheduled Backups solution as a first option. However, if those features don’t meet your needs, this extension can be a more flexible alternative.
-
 With this extension, you can capture and retain incremental changes in Firestore for up to 30 days or more, allowing for point-in-time recovery well beyond the default 7-day window.
 
 The extension captures changes on every Firestore write and stores the change incrementally in BigQuery. This data capture mechanism ensures a complete history is maintained, enabling recovery to any point within the configured backup period.
@@ -17,16 +15,6 @@ This extension is subject to [BigQuery write throughput limitations and availabi
 Before installing this extension, you’ll need to
 
 - [Set up Cloud Firestore in your Firebase project](https://firebase.google.com/docs/firestore/quickstart).
-- [Enable PiTR in your Firestore database instance](https://firebase.google.com/docs/firestore/use-pitr)
-- Ensure that a separate Firestore instance exists. A valid database must exist for the restoration to backup to. Ensure that a separate Firestore instance exists If one does not exist, you can create one with the following script:
-
-```bash
-    gcloud alpha firestore databases create \
-    --database=DATABASE_ID \
-    --location=LOCATION \
-    --type=firestore-native \
-    --project=PROJECT_ID
-```
 
 (Note that this extension currently only works on database instances in `firestore-native` mode).
 
