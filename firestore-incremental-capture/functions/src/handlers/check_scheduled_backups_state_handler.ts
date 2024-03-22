@@ -58,11 +58,13 @@ export const checkScheduledBackupStateHandler = async (data: any) => {
         status: {message: RestoreStatus.RUNNING_DATAFLOW},
       });
 
-      await launchJob(
+      const response = await launchJob(
         (restoreData.timestamp as admin.firestore.Timestamp).seconds,
         restoreRef,
         restoreData?.destinationDatabaseId
       );
+
+      await scheduledBackups.enqueueCheckDataflowStatus(response.job!.id!);
     } else {
       functions.logger.info('Operation still running');
       await scheduledBackups.enqueueCheckOperationStatus(jobId);

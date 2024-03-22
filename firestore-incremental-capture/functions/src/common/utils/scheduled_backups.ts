@@ -189,6 +189,22 @@ export class ScheduledBackups {
       );
   }
 
+  async enqueueCheckDataflowStatus(jobId: string) {
+    logger.info('Scheduling task to check dataflow again in 4 mins');
+
+    await getFunctions()
+      .taskQueue(
+        `locations/${config.location}/functions/checkDataflowJobState`,
+        config.instanceId
+      )
+      .enqueue(
+        {
+          jobId: jobId,
+        },
+        {scheduleDelaySeconds: 240}
+      );
+  }
+
   getAuthClient() {
     return google.auth.getClient({
       scopes: ['https://www.googleapis.com/auth/cloud-platform'],

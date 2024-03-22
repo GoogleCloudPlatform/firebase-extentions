@@ -80,7 +80,9 @@ resources:
       location: ${LOCATION}
       runtime: nodejs18
       timeout: 540s
-      taskQueueTrigger: {}
+      taskQueueTrigger:
+        retryConfig:
+          maxAttempts: 15
 
   - name: syncData
     type: firebaseextensions.v1beta.function
@@ -111,21 +113,21 @@ resources:
       availableMemoryMb: 512
       runtime: nodejs18
       location: ${LOCATION}
-      taskQueueTrigger: {}
+      taskQueueTrigger:
+        retryConfig:
+          maxAttempts: 2
 
-  - name: updateDataflowStatus
-    type: firebaseextensions.v1beta.v2function
+  - name: checkDataflowJobState
+    type: firebaseextensions.v1beta.function
     description: >-
-      Updates the status of the DataFlow job in Firestore.
+      Checks if the DataFlow job is done to update the status
     properties:
+      availableMemoryMb: 512
+      runtime: nodejs18
       location: ${LOCATION}
-      buildConfig:
-        runtime: nodejs18
-      eventTrigger:
-        eventType: google.cloud.dataflow.job.v1beta3.statusChanged
-        # eventFilters:
-        #   - attribute: job
-        #     value: projects/${param:PROJECT_ID}/locations/${LOCATION}/jobs/${param:EXT_INSTANCE_ID}-*
+      taskQueueTrigger:
+        retryConfig:
+          maxAttempts: 2
 
 params:
   - param: LOCATION

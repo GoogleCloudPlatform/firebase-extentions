@@ -60,9 +60,12 @@ export const syncDataHandler = async (
 
   // Write the data to the database
   await table.insert(data).catch((ex: any) => {
-    for (const error of ex.errors) {
-      for (const err of error.errors) {
-        functions.logger.error(err);
+    functions.logger.error('Error writing to BigQuery', ex);
+    if (ex.errors.length) {
+      for (const error of ex.errors) {
+        for (const err of error.errors) {
+          functions.logger.error(err);
+        }
       }
     }
   });

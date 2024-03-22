@@ -20,11 +20,8 @@ import {FlexTemplatesServiceClient} from '@google-cloud/dataflow';
 import {Timestamp} from 'firebase-admin/firestore';
 
 import config from '../../config';
-import {ScheduledBackups} from './scheduled_backups';
-import {RestoreStatus} from '../models/restore_job_status';
 
 const dataflowClient = new FlexTemplatesServiceClient();
-const scheduledBackups = new ScheduledBackups();
 
 export async function launchJob(
   timestamp: number,
@@ -65,14 +62,7 @@ export async function launchJob(
     },
   });
 
-  await scheduledBackups.updateRestoreJobDoc(jobRef, {
-    status: {
-      message: RestoreStatus.RUNNING_DATAFLOW,
-    },
-    dataflowJob: response.job,
-  });
-
-  logger.info(`Launched job named ${response.job?.name} successfully`, {
+  logger.info(`Launched job named ${response.job?.id} successfully`, {
     job_response: response,
   });
 

@@ -77,11 +77,7 @@ Google Cloud Console [here](https://console.cloud.google.com/dataflow/pipelines)
 
 * **checkScheduledBackupState:** Checks if a scheduled backup is done to trigger the DataFlow job
 
-
-
-**Other Resources**:
-
-* updateDataflowStatus (firebaseextensions.v1beta.v2function)
+* **checkDataflowJobState:** Checks if the DataFlow job is done to update the status
 
 
 
