@@ -47,7 +47,7 @@ export async function backfillEmbeddingsTaskHandler(data: any) {
     const refs = documentIds.map((id: string) =>
       admin.firestore().collection(collectionName).doc(id)
     );
-    const docs = await transaction.getAll<DocumentData>(...refs);
+    const docs = await transaction.getAll<DocumentData, DocumentData>(...refs);
 
     docs.map(doc => {
       const data = doc.data();
