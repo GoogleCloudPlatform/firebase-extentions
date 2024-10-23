@@ -66,6 +66,7 @@ export class GeminiGenerativeClient extends GenerativeClient<
           temperature: options.temperature,
           candidateCount: options.candidateCount,
           maxOutputTokens: options.maxOutputTokens,
+          responseMimeType: config.responseMimeType,
         },
         safetySettings: options.safetySettings,
       });

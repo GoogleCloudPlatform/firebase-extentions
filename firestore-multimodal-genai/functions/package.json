@@ -14,7 +14,7 @@
     "@google-ai/generativelanguage": "^2.3.0",
     "@google-cloud/aiplatform": "^3.19.0",
     "@google-cloud/vertexai": "^1.1.0",
-    "@google/generative-ai": "^0.8.0",
+    "@google/generative-ai": "^0.11.4",
     "@types/jest": "^29.5.12",
     "@types/mustache": "^4.2.2",
     "firebase-admin": "^12.1.0",

@@ -126,4 +126,5 @@ export default {
   safetySettings: getSafetySettings(),
   bucketName: process.env.BUCKET_NAME || defaultBucketName,
   imageField: process.env.IMAGE_FIELD,
+  responseMimeType: process.env.RESPONSE_MIME_TYPE || 'text/plain',
 };
