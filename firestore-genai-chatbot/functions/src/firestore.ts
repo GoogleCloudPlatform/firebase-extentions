@@ -8,7 +8,7 @@ import {extractOverrides} from './overrides';
 const {promptField, responseField, orderField} = config;
 
 export async function fetchHistory(ref: DocumentReference) {
-  const collSnap = await ref.parent.orderBy(orderField, 'desc').get();
+  const collSnap = await ref.parent.orderBy(orderField).get();
 
   const refData = await ref.get();
   const refOrderFieldVal = refData.get(orderField);
