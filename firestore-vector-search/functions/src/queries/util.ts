@@ -17,7 +17,7 @@ const operatorSchema = z.enum([
 export const prefilterSchema = z.object({
   field: z.string(),
   operator: operatorSchema,
-  value: z.string(),
+  value: z.union([z.string(), z.array(z.string())]),
 });
 
 export const parseLimit = (limit: unknown) => {
