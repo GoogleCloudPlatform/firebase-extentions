@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import {SafetySetting as VertexSafetySetting} from '@google-cloud/vertexai';
-import {SafetySetting as GoogleAISafetySetting} from '@google/generative-ai';
-
 // our own types
 
 export interface Message {
@@ -101,7 +98,7 @@ export interface GenerateMessageOptions {
    **/
   candidateCount?: number;
 
-  safetySettings?: VertexSafetySetting[] | GoogleAISafetySetting[];
+  // safetySettings?: VertexSafetySetting[] | GoogleAISafetySetting[];
   /**
    * Pass a previously returned response to continue a conversation.
    */

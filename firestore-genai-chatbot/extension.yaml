@@ -108,7 +108,7 @@ params:
       [Google AI Gemini models](https://ai.google.dev/models/gemini)
     type: string
     required: true
-    default: gemini-1.0-pro
+    default: gemini-1.5-pro
     immutable: false
 
   - param: COLLECTION_NAME

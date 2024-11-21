@@ -1,3 +1,4 @@
+import {expect} from 'vitest';
 import {Timestamp} from 'firebase-admin/firestore';
 
 export const expectToProcessCorrectly = (

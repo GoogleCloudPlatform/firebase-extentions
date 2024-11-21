@@ -1,7 +1,9 @@
 import {DiscussionClient, Message} from './base_class';
-import {GoogleGenerativeAI, InputContent} from '@google/generative-ai';
 import {logger} from 'firebase-functions/v1';
-import {SafetySetting} from '@google/generative-ai';
+import {genkit, Genkit, MessageData, Part} from 'genkit';
+import {z} from 'genkit';
+import {googleAI, gemini15Flash} from '@genkit-ai/googleai';
+import config from '../config';
 
 interface GeminiChatOptions {
   history?: Message[];
@@ -14,29 +16,33 @@ interface GeminiChatOptions {
   projectId: string;
   location: string;
   context?: string;
-  safetySettings: SafetySetting[];
 }
 
-type ApiMessage = {
-  role: string;
-  parts: {
-    text: string;
-  }[];
-};
+const ai = genkit({
+  plugins: [
+    googleAI({
+      apiKey: config.googleAi.apiKey,
+    }),
+  ],
+});
 
-enum Role {
-  USER = 'user',
-  GEMINI = 'model',
-}
+// Schema for validating `custom` field
+const CustomSchema = z.object({
+  candidates: z.array(
+    z.object({
+      safetyRatings: z.array(z.any()).optional(),
+    })
+  ),
+});
 
 export class GeminiDiscussionClient extends DiscussionClient<
-  GoogleGenerativeAI,
-  GeminiChatOptions,
-  ApiMessage
+  Genkit,
+  GeminiChatOptions
 > {
   modelName: string;
+
   constructor({apiKey, modelName}: {apiKey?: string; modelName: string}) {
-    super();
+    super(ai);
     if (!apiKey) {
       throw new Error('API key required.');
     }
@@ -44,83 +50,49 @@ export class GeminiDiscussionClient extends DiscussionClient<
       throw new Error('Model name required.');
     }
     this.modelName = modelName;
-    this.client = new GoogleGenerativeAI(apiKey);
-  }
-
-  createApiMessage(
-    messageContent: string,
-    role: 'user' | 'model' = 'user'
-  ): ApiMessage {
-    const apiRole = role === 'user' ? Role.USER : Role.GEMINI;
-
-    return {
-      role: apiRole,
-      parts: [{text: messageContent}],
-    };
   }
 
   async generateResponse(
-    history: Message[],
-    latestApiMessage: ApiMessage,
+    history: MessageData[],
+    latestApiMessage: Part[],
     options: GeminiChatOptions
   ) {
-    if (!this.client) {
-      throw new Error('Client not initialized.');
-    }
-
-    const model = this.client.getGenerativeModel({
-      model: this.modelName,
-    });
-
-    const chatSession = model.startChat({
-      history: this.messagesToApi(history),
-      generationConfig: {
-        topP: options.topP,
-        topK: options.topK,
-        temperature: options.temperature,
-        maxOutputTokens: options.maxOutputTokens,
-        candidateCount: options.candidateCount,
-      },
-      safetySettings: options.safetySettings,
-    });
-
-    let result;
     try {
-      result = await chatSession.sendMessage(latestApiMessage.parts[0].text);
+      const llmResponse = await this.client.generate({
+        prompt: latestApiMessage,
+        messages: history,
+        model: `googleai/${this.modelName}` as unknown as typeof gemini15Flash,
+        config: {
+          topP: options.topP,
+          topK: options.topK,
+          temperature: options.temperature,
+          maxOutputTokens: options.maxOutputTokens,
+          safetySettings: config.safetySettings,
+        },
+      });
+
+      // Safe parsing of `custom` using CustomSchema
+      const safeCustom = CustomSchema.safeParse(llmResponse.custom);
+
+      if (safeCustom.success) {
+        return {
+          response: llmResponse.text,
+          candidates: safeCustom.data.candidates.map(c => JSON.stringify(c)),
+          safetyMetadata: safeCustom.data.candidates[0]?.safetyRatings ?? null,
+          history,
+        };
+      } else {
+        return {
+          response: llmResponse.text,
+          candidates: (llmResponse.custom as any).candidates.map((c: any) =>
+            JSON.stringify(c)
+          ),
+          history,
+        };
+      }
     } catch (e) {
       logger.error(e);
-      // TODO: the error message provided exposes the API key, so we should handle this/ get the Gemini team to fix it their side.
-      throw new Error(
-        'Failed to generate response, see function logs for more details.'
-      );
+      throw e;
     }
-
-    const text = result.response.text();
-
-    if (!text) {
-      throw new Error('No text returned candidate');
-    }
-
-    return {
-      response: text,
-      candidates:
-        result.response.candidates?.map(c => c.content.parts[0].text ?? '') ??
-        [],
-      safetyMetadata: result.response.promptFeedback,
-      history,
-    };
-  }
-
-  private messagesToApi(messages: Message[]) {
-    const out: InputContent[] = [];
-    for (const message of messages) {
-      if (!message.prompt || !message.response) {
-        // logs.warnMissingPromptOrResponse(message.path!);
-        continue;
-      }
-      out.push({role: Role.USER, parts: [{text: message.prompt!}]});
-      out.push({role: Role.GEMINI, parts: [{text: message.response!}]});
-    }
-    return out;
   }
 }

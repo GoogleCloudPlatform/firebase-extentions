@@ -1,19 +1,20 @@
 import {extractOverrides} from '../../src/overrides'; // Adjust the import as per your file structure
+import {describe, beforeEach, afterEach, test, expect, vi} from 'vitest';
 
 describe('extractOverrides function', () => {
   let mockDocSnap: any;
 
   beforeEach(() => {
     mockDocSnap = {
-      get: jest.fn(field => mockDocSnap[field]),
-      exists: jest.fn().mockReturnValue(true),
+      get: vi.fn(field => mockDocSnap[field]),
+      exists: vi.fn().mockReturnValue(true),
       data: () => mockDocSnap,
       // Mock other necessary DocumentSnapshot methods here
     };
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('should correctly extract string fields', () => {

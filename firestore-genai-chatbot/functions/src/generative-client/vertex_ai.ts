@@ -1,14 +1,11 @@
-import {DiscussionClient, Message} from './base_class';
 import {logger} from 'firebase-functions/v1';
-import {
-  VertexAI,
-  GenerateContentRequest,
-  Content,
-  Part,
-} from '@google-cloud/vertexai';
+import {logger as genkitLogger} from 'genkit/logging';
+import {Part, MessageData, Genkit, genkit} from 'genkit';
+import {z} from 'genkit';
+import {DiscussionClient} from './base_class';
+import {Message} from '../types';
+import {vertexAI, gemini15Flash} from '@genkit-ai/vertexai';
 import config from '../config';
-import {SafetySetting as VertexSafetySetting} from '@google-cloud/vertexai';
-
 interface GeminiChatOptions {
   history?: Message[];
   model: string;
@@ -20,130 +17,78 @@ interface GeminiChatOptions {
   projectId: string;
   location: string;
   context?: string;
-  safetySettings?: VertexSafetySetting[];
 }
 
-type ApiMessage = {
-  role: string;
-  parts: Part[];
-};
+const ai = genkit({
+  plugins: [vertexAI()],
+});
 
-enum Role {
-  USER = 'user',
-  GEMINI = 'model',
-}
+genkitLogger.setLogLevel('debug');
+
+// Schema for validating `custom` field
+const CustomSchema = z.object({
+  candidates: z.array(
+    z.object({
+      safetyRatings: z.array(z.any()).optional(),
+    })
+  ),
+});
 
 export class VertexDiscussionClient extends DiscussionClient<
-  VertexAI,
-  GeminiChatOptions,
-  ApiMessage
+  Genkit,
+  GeminiChatOptions
 > {
   modelName: string;
+
   constructor({modelName}: {apiKey?: string; modelName: string}) {
-    super();
-    this.client = new VertexAI({
-      project: config.projectId,
-      location: config.location,
-    });
+    super(ai);
     if (!modelName) {
       throw new Error('Model name required.');
     }
     this.modelName = modelName;
   }
 
-  createApiMessage(
-    messageContent: string,
-    role: 'user' | 'model' = 'user'
-  ): ApiMessage {
-    const apiRole = role === 'user' ? Role.USER : Role.GEMINI;
-    return {
-      role: apiRole,
-      parts: [{text: messageContent}],
-    };
-  }
-
   async generateResponse(
-    history: Message[],
-    latestApiMessage: ApiMessage,
+    history: MessageData[],
+    latestApiMessage: Part[],
     options: GeminiChatOptions
   ) {
-    if (!this.client) {
-      throw new Error('Client not initialized.');
-    }
-
-    let result;
-    const generativeModel = this.client.preview.getGenerativeModel({
-      model: this.modelName,
-    });
-
-    const contents = [...this.messagesToApi(history), latestApiMessage];
-
-    const request: GenerateContentRequest = {
-      contents,
-      generationConfig: {
-        topK: options.topK,
-        topP: options.topP,
-        temperature: options.temperature,
-        candidateCount: options.candidateCount,
-        maxOutputTokens: options.maxOutputTokens,
-      },
-      safetySettings: options.safetySettings,
-    };
     try {
-      const responseStream =
-        await generativeModel.generateContentStream(request);
+      const llmResponse = await this.client.generate({
+        prompt: latestApiMessage,
+        messages: history,
+        model: `vertexai/${this.modelName}` as unknown as typeof gemini15Flash,
+        config: {
+          topP: options.topP,
+          topK: options.topK,
+          temperature: options.temperature,
+          maxOutputTokens: options.maxOutputTokens,
+          safetySettings: config.safetySettings,
+        },
+      });
 
-      // TODO: we can stream now!
-      const aggregatedResponse = await responseStream.response;
+      // Safe parsing of `custom` using CustomSchema
+      const safeCustom = CustomSchema.safeParse(llmResponse.custom);
 
-      result = aggregatedResponse;
-      // result = await chatSession.sendMessage(latestApiMessage.parts[0].text);
+      if (safeCustom.success) {
+        return {
+          response: llmResponse.text,
+          candidates: safeCustom.data.candidates.map(c => JSON.stringify(c)),
+          safetyMetadata: safeCustom.data.candidates[0]?.safetyRatings,
+          history,
+        };
+      } else {
+        return {
+          response: llmResponse.text,
+          candidates: (llmResponse.custom as any).candidates.map((c: any) =>
+            JSON.stringify(c)
+          ),
+          history,
+        };
+      }
     } catch (e) {
       logger.error(e);
-      // TODO: the error message provided exposes the API key, so we should handle this/ get the Gemini team to fix it their side.
-      throw new Error(
-        'Failed to generate response, see function logs for more details.'
-      );
+      throw e;
     }
-
-    if (
-      !result.candidates ||
-      !Array.isArray(result.candidates) ||
-      result.candidates.length === 0
-    ) {
-      // TODO: handle blocked responses
-      throw new Error('No candidates returned');
-    }
-
-    const candidates = result.candidates.filter(c => {
-      return (
-        c &&
-        c.content &&
-        c.content.parts &&
-        c.content.parts.length > 0 &&
-        c.content.parts[0].text &&
-        typeof c.content.parts[0].text === 'string'
-      );
-    });
-
-    return {
-      response: candidates[0]!.content!.parts![0].text!,
-      candidates: candidates?.map(c => c.content!.parts![0].text!) ?? [],
-      safetyMetadata: result.promptFeedback,
-      history,
-    };
-  }
-
-  private messagesToApi(messages: Message[]) {
-    const out: Content[] = [];
-    for (const message of messages) {
-      if (!message.prompt || !message.response) {
-        // logs.warnMissingPromptOrResponse(message.path!);
-        continue;
-      }
-      out.push({role: Role.USER, parts: [{text: message.prompt!}]});
-      out.push({role: Role.GEMINI, parts: [{text: message.response!}]});
-    }
-    return out;
   }
 }

@@ -117,6 +117,7 @@ export class FirestoreOnWriteProcessor<
 
     try {
       const input = this.getLatestInputValue(change);
+      console.log('Processing input:', input);
       const output = await this.processFn(input, change.after);
       await this.writeCompletionEvent(change, output);
     } catch (e) {

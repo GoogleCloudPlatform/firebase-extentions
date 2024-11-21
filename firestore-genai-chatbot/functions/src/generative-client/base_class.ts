@@ -1,3 +1,5 @@
+import {MessageData, Part} from 'genkit';
+
 export interface Message {
   path?: string;
   prompt?: string;
@@ -6,36 +8,40 @@ export interface Message {
 
 export interface ChatResponse {
   response: string;
-  candidates: string[];
-  //TODO: fix this type
+  candidates?: string[];
   safetyMetadata?: any;
-  history: Message[];
+  history: MessageData[];
 }
 
 export abstract class DiscussionClient<
-  Client,
+  Genkit,
   ChatOptions extends {
     history?: Message[];
     context?: string;
   },
-  ApiMessage,
 > {
-  client?: Client;
-  constructor() {}
+  client: Genkit;
+  constructor(client: Genkit) {
+    this.client = client;
+  }
 
   private getHistory(options: ChatOptions) {
-    let history: Message[] = [];
-
+    const history: MessageData[] = [];
     if (options.context) {
-      const contextMessage = {
-        prompt: `System prompt: ${options.context}.`,
-        response: 'Understood.',
-      };
-      history = [contextMessage];
+      history.push({content: [{text: options.context}], role: 'system'});
     }
+
     if (options.history) {
-      history = [...history, ...options.history];
+      options.history.forEach(message => {
+        if (!message.response) return;
+        history.push({content: [{text: message.prompt ?? ''}], role: 'user'});
+        history.push({
+          content: [{text: message.response ?? ''}],
+          role: 'model',
+        });
+      });
     }
+
     return history;
   }
 
@@ -48,19 +54,19 @@ export abstract class DiscussionClient<
     }
     const history = this.getHistory(options);
     const latestApiMessage = this.createApiMessage(messageContent);
-    return await this.generateResponse(history, latestApiMessage, options);
+    const res = await this.generateResponse(history, latestApiMessage, options);
+
+    console.log('RES', res);
+    return res;
   }
 
-  createApiMessage(
-    _messageContent: string,
-    _role: 'user' | 'model' = 'user'
-  ): ApiMessage {
-    throw new Error('Method Not implemented');
+  createApiMessage(_messageContent: string): Part[] {
+    return [{text: _messageContent}];
   }
 
   async generateResponse(
-    _history: Message[],
-    _latestApiMessage: ApiMessage,
+    _history: MessageData[],
+    _latestApiMessage: Part[],
     _options: ChatOptions
   ): Promise<ChatResponse> {
     throw new Error('Not implemented');

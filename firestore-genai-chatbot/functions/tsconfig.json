@@ -11,5 +11,5 @@
     "types": ["node", "jest"]
   },
   "compileOnSave": true,
-  "include": ["."]
+  "include": ["./src/**/*"]
 }
