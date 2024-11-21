@@ -20,7 +20,7 @@ import {getEventarc, Channel} from 'firebase-admin/eventarc';
 import * as speech from '@google-cloud/speech';
 import * as path from 'path';
 import * as os from 'os';
-import * as mkdirp from 'mkdirp';
+import {mkdirp} from 'mkdirp';
 import {FieldValue} from 'firebase-admin/firestore';
 
 import * as logs from './logs';
