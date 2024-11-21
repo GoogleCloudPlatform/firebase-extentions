@@ -1,0 +1,47 @@
+{
+  "name": "firestore-incremental-capture-setup",
+  "version": "0.0.1",
+  "description": "Build and install dataflow templates for firestore-incremental-capture",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "npm run clean && npm run compile && npm run copy-files",
+    "build-watch": "npm run clean && tsc --watch",
+    "clean": "rimraf ./lib",
+    "compile": "tsc",
+    "import": "node ./lib/index.js",
+    "prepare": "npm run build",
+    "test:local": "jest",
+    "copy-files": "copyfiles -u 1 src/bash/*.sh lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "bin": {
+    "firestore-incremental-capture-setup": "./lib/index.js"
+  },
+  "author": "Jan Wyszynski <wyszynski@google.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/jest": "^29.5.9",
+    "chalk": "^5.3.0",
+    "child_process": "^1.0.2",
+    "commander": "^5.0.0",
+    "inquirer": "^6.4.0",
+    "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.0",
+    "@types/shelljs": "^0.8.14",
+    "@types/workerpool": "^6.0.0",
+    "axios": "^1.6.2",
+    "chai": "^4.2.0",
+    "copyfiles": "^2.4.1",
+    "dotenv": "^16.3.1",
+    "jest": "^29.7.0",
+    "nanoid": "^4.0.0",
+    "rimraf": "^2.7.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.2.4"
+  }
+}

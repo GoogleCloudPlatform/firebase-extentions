@@ -1,3 +1,4 @@
+/* eslint-disable */
 const {Spanner} = require('@google-cloud/spanner');
 const {PreciseDate} = require('@google-cloud/precise-date');
 

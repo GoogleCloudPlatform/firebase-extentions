@@ -1,3 +1,4 @@
+/* eslint-disable */
 const {BigQuery} = require('@google-cloud/bigquery');
 
 const bq = new BigQuery({projectId: 'dev-extensions-testing'});

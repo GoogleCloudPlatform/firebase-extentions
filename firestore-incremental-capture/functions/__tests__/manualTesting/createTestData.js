@@ -1,3 +1,4 @@
+/* eslint-disable */
 const admin = require('firebase-admin');
 
 admin.initializeApp({projectId: 'dev-extensions-testing'});
