@@ -48,6 +48,7 @@ export interface Config {
   safetySettings?: GoogleAISafetySetting[] | VertexSafetySetting[];
   provider: GenerativeAIProvider;
   maxOutputTokens?: number;
+  responseMimeType?: string;
 }
 
 function getSafetySettings(): GoogleAISafetySetting[] | VertexSafetySetting[] {
@@ -116,6 +117,7 @@ const config: Config = {
   maxOutputTokens: process.env.MAX_OUTPUT_TOKENS
     ? parseInt(process.env.MAX_OUTPUT_TOKENS)
     : undefined,
+  responseMimeType: process.env.RESPONSE_MIME_TYPE || 'text/plain',
 };
 
 export default config;

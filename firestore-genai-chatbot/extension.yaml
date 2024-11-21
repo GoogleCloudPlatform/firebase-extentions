@@ -258,6 +258,22 @@ params:
     required: false
     immutable: false
 
+  - param: RESPONSE_MIME_TYPE
+    label: Output response mimetype of the generated candidate text.
+    description: >-
+      Supported mimetype:
+      - text/plain: (default) Text output.
+      - application/json: JSON response in the candidates.
+      The model needs to be prompted to output the appropriate response type, otherwise the behavior is undefined.
+    type: select
+    options:
+      - label: JSON
+        value: application/json
+      - label: Text
+        value: text/plain
+    default: text/plain
+    required: false
+
   - param: CANDIDATE_COUNT
     label: Candidate count
     description: >-
