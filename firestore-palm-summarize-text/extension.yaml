@@ -23,8 +23,8 @@ tags:
     summarization-api,
     generative-ai,
     text-ai,
-    language-ai,
-    large-language-models,
+    generative-ai,
+    generative-ai-models,
     llm,
     nlp,
     google-ai,
@@ -84,36 +84,6 @@ resources:
 # In the `params` field, set up your extension's user-configured parameters.
 # Learn more in the docs: https://firebase.google.com/docs/extensions/alpha/ref-extension-yaml#params-field
 params:
-  - param: PALM_API_PROVIDER
-    label: Palm API Provider
-    description: >-
-      There are two services which provide access to the PaLM API. Which would
-      you like to use? If Vertex AI is selected, the service will be
-      automatically enabled. If Generative Language is selected, you can provide
-      an API key obtained through MakerSuite or your GCP console, or use
-      Application Default Credentials if the Generative Language AI is enabled
-      in your google cloud project.
-    type: select
-    options:
-      - label: Vertex AI
-        value: vertex
-      - label: Generative Language AI for Developers
-        value: generative
-    required: true
-    default: vertex
-    immutable: false
-
-  - param: API_KEY
-    label: API Key (Generative Language AI for Developers Provider ONLY)
-    description: >-
-      If you selected Generative AI for Developers as your PaLM API provider,
-      you can optionally choose to provide an API key. If you do not provide an
-      API key, the extension will use Application Default Credentials, but will
-      need the service enabled in GCP.
-    type: secret
-    required: false
-    immutable: false
-
   - param: COLLECTION_NAME
     label: Collection Name
     description: >-
@@ -167,28 +137,6 @@ params:
     validationErrorMessage: Please specify an integer in the range [1,1024]
     required: false
     default: 1024
-    immutable: false
-
-  - param: CONTENT_FILTER_THRESHOLD
-    label: Content Filter Threshold
-    description: >-
-      Threshold for harmful content. Specify what level of harmful content is
-      blocked by the PaLM provider. This threshold is applicable only to the
-      Generative Language PaLM API.
-    type: select
-    options:
-      - label: Default
-        value: HARM_BLOCK_THRESHOLD_UNSPECIFIED
-      - label: Block low and above
-        value: BLOCK_LOW_AND_ABOVE
-      - label: Block medium and above
-        value: BLOCK_MEDIUM_AND_ABOVE
-      - label: Block only high
-        value: BLOCK_ONLY_HIGH
-      - label: Block none
-        value: BLOCK_NONE
-    required: false
-    default: HARM_BLOCK_THRESHOLD_UNSPECIFIED
     immutable: false
 
   - param: LOCATION

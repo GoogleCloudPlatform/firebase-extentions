@@ -10,7 +10,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@google-ai/generativelanguage": "^1.0.0",
+    "@google-ai/generativelanguage": "^1.1.0",
     "@google-cloud/aiplatform": "^3.0.0",
     "firebase-admin": "^11.6.0",
     "firebase-functions": "^4.3.0",

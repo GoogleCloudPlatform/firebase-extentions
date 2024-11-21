@@ -30,24 +30,14 @@ export interface Config {
   topK?: number;
   candidateCount?: number;
   candidatesField?: string;
-  provider: string;
-  apiKey?: string;
 }
 
 function getModel() {
-  switch (process.env.PALM_API_PROVIDER) {
-    case 'generative':
-      switch (process.env.MODEL) {
-        default:
-          return 'chat-bison';
-      }
+  switch (process.env.MODEL) {
+    case 'codechat-bison':
+      return 'codechat-bison';
     default:
-      switch (process.env.MODEL) {
-        case 'codechat-bison':
-          return 'codechat-bison';
-        default:
-          return 'chat-bison';
-      }
+      return 'chat-bison';
   }
 }
 
@@ -76,8 +66,6 @@ const config: Config = {
     ? parseInt(process.env.CANDIDATE_COUNT)
     : 1,
   candidatesField: process.env.CANDIDATES_FIELD || 'candidates',
-  provider: process.env.PALM_API_PROVIDER || 'vertex',
-  apiKey: process.env.API_KEY,
 };
 
 export default config;

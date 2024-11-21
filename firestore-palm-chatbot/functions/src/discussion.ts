@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {DiscussServiceClient} from '@google-ai/generativelanguage';
 import {helpers, v1} from '@google-cloud/aiplatform';
 import * as logs from './logs';
-import {GoogleAuth} from 'google-auth-library';
 import {
   APIGenerateMessageRequest,
   APIMessage,
@@ -32,7 +30,6 @@ import {
 import config from './config';
 
 export class Discussion {
-  private generativeClient?: DiscussServiceClient;
   private vertexClient?: v1.PredictionServiceClient;
   private endpoint?: string;
   context?: string;
@@ -52,11 +49,7 @@ export class Discussion {
     this.candidateCount = options.candidateCount;
     this.model = options.model;
 
-    if (config.provider === 'vertex') {
-      this.initVertexClient();
-    } else {
-      this.initGenerativeClient();
-    }
+    this.initVertexClient();
   }
 
   private initVertexClient() {
@@ -68,27 +61,6 @@ export class Discussion {
     };
 
     this.vertexClient = new v1.PredictionServiceClient(clientOptions);
-  }
-
-  private initGenerativeClient() {
-    if (config.apiKey) {
-      logs.usingAPIKey();
-      const authClient = new GoogleAuth().fromAPIKey(config.apiKey);
-      this.generativeClient = new DiscussServiceClient({
-        authClient,
-      });
-    } else {
-      logs.usingADC();
-      const auth = new GoogleAuth({
-        scopes: [
-          'https://www.googleapis.com/auth/userinfo.email',
-          'https://www.googleapis.com/auth/generative-language',
-        ],
-      });
-      this.generativeClient = new DiscussServiceClient({
-        auth,
-      });
-    }
   }
 
   private getHistory(options: GenerateMessageOptions) {
@@ -121,13 +93,8 @@ export class Discussion {
       ),
     });
 
-    if (config.provider === 'vertex') {
-      const request = this.createVertexRequest(prompt, options);
-      return this.generateMessageVertex(request);
-    }
-
-    const request = this.createGenerativeRequest(prompt, options);
-    return this.generateMessageGenerative(request);
+    const request = this.createVertexRequest(prompt, options);
+    return this.generateMessageVertex(request);
   }
 
   private createVertexRequest(
@@ -166,57 +133,6 @@ export class Discussion {
       parameters,
     };
     return request;
-  }
-
-  private createGenerativeRequest(
-    prompt: PaLMPrompt,
-    options: GenerateMessageOptions
-  ) {
-    const request: APIGenerateMessageRequest = {
-      prompt,
-      model: `models/${this.model}`,
-      temperature: options.temperature || this.temperature,
-      topP: options.topP || this.topP,
-      topK: options.topK || this.topK,
-      candidateCount: options.candidateCount || this.candidateCount,
-    };
-
-    return request;
-  }
-
-  private async generateMessageGenerative(
-    request: APIGenerateMessageRequest
-  ): Promise<GenerateMessageResponse> {
-    if (!this.generativeClient) {
-      throw new Error('Generative client not initialized.');
-    }
-
-    const [result] = await this.generativeClient.generateMessage(request);
-
-    if (result.filters && result.filters.length) {
-      throw new Error(
-        'Chat prompt or response filtered by the PaLM API content filter.'
-      );
-    }
-
-    if (!result.candidates || !result.candidates.length) {
-      throw new Error('No candidates returned from server.');
-    }
-
-    const content = result.candidates[0].content;
-
-    const candidates = result.candidates!.map(c => c.content!);
-
-    if (!content) {
-      throw new Error('No content returned from server.');
-    }
-    const messages = result.messages || [];
-
-    return {
-      response: content,
-      candidates,
-      history: this.messagesFromApi(messages),
-    };
   }
 
   private async generateMessageVertex(

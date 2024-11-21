@@ -34,11 +34,8 @@ const {
   temperature,
   topP,
   topK,
-  candidateCount,
-  candidatesField,
   maxOutputTokens,
   variableFields,
-  generativeSafetySettings,
 } = config;
 
 const textGenerator = new TextGenerator({
@@ -46,9 +43,7 @@ const textGenerator = new TextGenerator({
   temperature,
   topP,
   topK,
-  candidateCount,
   maxOutputTokens,
-  generativeSafetySettings,
 });
 
 logs.init(config);
@@ -124,8 +119,6 @@ export const generateText = functions.firestore
         'status.updateTime': FieldValue.serverTimestamp(),
       };
 
-      console.log(result.safetyMetadata);
-
       if (result.safetyMetadata) {
         metadata.safetyMetadata = {};
 
@@ -143,21 +136,6 @@ export const generateText = functions.firestore
           'status.state': 'ERRORED',
           'status.error':
             'The generated text was blocked by the safety filter.',
-        });
-      }
-
-      const addCandidatesField =
-        config.provider === 'generative' &&
-        candidatesField &&
-        candidateCount &&
-        candidateCount > 1;
-
-      if (addCandidatesField) {
-        return ref.update({
-          ...metadata,
-          [responseField]: result.candidates[0],
-          [candidatesField]: result.candidates,
-          'status.error': null,
         });
       }
       return ref.update({

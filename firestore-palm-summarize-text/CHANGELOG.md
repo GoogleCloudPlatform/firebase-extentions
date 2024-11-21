@@ -1,3 +1,7 @@
+## Version 1.0.0
+
+- **Breaking:** Drop Google AI as a provider of PaLM. Google AI is deprecating their PaLM API, but PaLM is still supported for Vertex AI.
+
 ## Version 0.1.11
 
 feat - support latest PaLM models

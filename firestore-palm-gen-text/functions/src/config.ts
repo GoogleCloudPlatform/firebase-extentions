@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {GLSafetySetting, GLHarmCategory, GLHarmBlockThreshold} from './types';
-
 export interface Config {
   location: string;
   projectId: string;
@@ -32,68 +30,13 @@ export interface Config {
   maxOutputTokens?: number;
   variableFields?: string[];
   maxOutputTokensVertex?: number;
-  provider?: string;
-  apiKey?: string;
-  generativeSafetySettings?: GLSafetySetting[];
 }
 
 function getModel() {
-  switch (process.env.PALM_API_PROVIDER) {
-    case 'generative':
-      switch (process.env.MODEL) {
-        default:
-          return 'text-bison';
-      }
+  switch (process.env.MODEL) {
     default:
-      switch (process.env.MODEL) {
-        default:
-          return 'text-bison';
-      }
+      return 'text-bison';
   }
-}
-
-function getGenerativeSafetySettings() {
-  const {
-    UNSPECIFIED_THRESHOLD,
-    DEROGATORY_THRESHOLD,
-    TOXICITY_THRESHOLD,
-    VIOLENCE_THRESHOLD,
-    SEXUAL_THRESHOLD,
-    MEDICAL_THRESHOLD,
-    DANGEROUS_THRESHOLD,
-  } = process.env as Record<string, keyof typeof GLHarmBlockThreshold>;
-
-  // Array to map categories to their environmental variables
-  return [
-    {
-      category: GLHarmCategory.HARM_CATEGORY_UNSPECIFIED,
-      threshold: UNSPECIFIED_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_DEROGATORY,
-      threshold: DEROGATORY_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_TOXICITY,
-      threshold: TOXICITY_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_VIOLENCE,
-      threshold: VIOLENCE_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_SEXUAL,
-      threshold: SEXUAL_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_MEDICAL,
-      threshold: MEDICAL_THRESHOLD!,
-    },
-    {
-      category: GLHarmCategory.HARM_CATEGORY_DANGEROUS,
-      threshold: DANGEROUS_THRESHOLD!,
-    },
-  ];
 }
 
 const config: Config = {
@@ -111,19 +54,12 @@ const config: Config = {
     : undefined,
   topP: process.env.TOP_P ? parseFloat(process.env.TOP_P) : undefined,
   topK: process.env.TOP_K ? parseInt(process.env.TOP_K) : undefined,
-  candidateCount: process.env.CANDIDATE_COUNT
-    ? parseInt(process.env.CANDIDATE_COUNT)
-    : 1,
-  candidatesField: process.env.CANDIDATES_FIELD || 'candidates',
   variableFields: process.env.VARIABLE_FIELDS
     ? process.env.VARIABLE_FIELDS.split(',')
     : undefined,
-  provider: process.env.PALM_API_PROVIDER,
   maxOutputTokensVertex: process.env.MAX_OUTPUT_TOKENS
     ? parseInt(process.env.MAX_OUTPUT_TOKENS)
     : 100,
-  apiKey: process.env.API_KEY,
-  generativeSafetySettings: getGenerativeSafetySettings(),
 };
 
 export default config;
