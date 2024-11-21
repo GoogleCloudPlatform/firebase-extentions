@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot with PaLM Api</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .loader {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      /* CSS for showing the dropdown on hover */
+      #dropdownHoverButton:hover + #dropdownHover,
+      #dropdownHover:hover {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans leading-normal tracking-normal">
+    <div
+      class="container mx-auto h-screen px-6 py-4 flex flex-col justify-center items-center"
+    >
+      <div class="w-full xl:w-3/4 lg:w-11/12 flex flex-col h-full">
+        <h3 class="text-2xl text-center mb-4">Call PaLM Api Securely</h3>
+
+        <button
+          id="dropdownHoverButton"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button"
+        >
+          Dropdown hover
+          <svg
+            class="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div
+          id="dropdownHover"
+          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+        ></div>
+
+        <div id="messages" class="flex-grow overflow-y-auto space-y-4 mb-4 p-4">
+          <!-- Messages will be appended here -->
+        </div>
+        <div class="flex flex-shrink-0">
+          <input
+            id="input-message"
+            type="text"
+            placeholder="Ask a question..."
+            class="w-full px-4 py-3 rounded-l-lg bg-gray-200 border border-gray-300 focus:border-indigo-500 focus:bg-white focus:outline-none"
+          />
+          <button
+            id="send-msg-btn"
+            class="px-4 rounded-r-lg bg-blue-500 text-white font-bold p-3 uppercase border-blue-500 border-t border-b border-r"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./call-palm-api-securely.ts"></script>
+  </body>
+</html>

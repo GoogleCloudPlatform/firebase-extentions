@@ -39,7 +39,6 @@ There are currently two different APIs providing access to PaLM large language m
 
 - The PaLM developer (Generative Language) API is currently in public preview, and you will need to sign up [waitlist](https://makersuite.google.com/waitlist) if you want to use it. For details and limitations, see the [PaLM API documentation](https://developers.generativeai.google/guide/preview_faq).
 
-
 ### Regenerating a response
 
 Changing the state field of a completed document's status from `COMPLETED` to anything else will retrigger the extension for that document.

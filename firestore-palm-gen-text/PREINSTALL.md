@@ -51,7 +51,6 @@ There are currently two different APIs providing access to PaLM large language m
 
 - For more details on the Vertex AI PaLM API, see the [Vertex AI documentation](https://cloud.google.com/vertex-ai/docs/generative-ai/learn/overview)
 
-
 ## Safety Thresholds
 
 Both the Generative Language for Developers and Vertex AI models have safety thresholds, to block inappropriate content. You can read the details here:

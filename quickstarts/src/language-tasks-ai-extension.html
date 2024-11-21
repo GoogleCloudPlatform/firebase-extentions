@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Extensions Example</title>
+    <link rel="stylesheet" href="./assets/index.css" />
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- Main container -->
+    <div class="min-h-screen flex flex-col justify-center items-center">
+      <!-- Title container -->
+      <div class="text-center mb-4">
+        <h1 class="text-3xl font-bold">Language Tasks with PaLM API</h1>
+      </div>
+      <!-- Product review container -->
+      <div class="bg-white shadow-lg rounded-lg p-4 w-full max-w-2xl">
+        <!-- Product details -->
+        <div class="mb-4 flex flex-col items-center">
+          <img
+            src="assets/water-bottle.png"
+            alt="Product Image"
+            class="mb-4 rounded-lg"
+            style="height: 100px; width: 100px"
+          />
+          <h4 class="text-sm font-medium">Classy Blue Water bottle</h4>
+          <p class="text-gray-600 text-sm">
+            Stay hydrated with our elegant and stylish water bottle. Perfect for
+            any occasion.
+          </p>
+          <p class="text-green-600 font-bold text-lg">$19.99</p>
+        </div>
+
+        <!-- Product review container -->
+        <div class="bg-white shadow-lg rounded-lg p-4 w-full max-w-2xl">
+          <!-- Input section -->
+          <div>
+            <label
+              for="input-text"
+              class="block mb-2 text-lg font-medium text-gray-700"
+            >
+              Write your review here
+            </label>
+            <textarea
+              id="input-text"
+              placeholder="Enter comment here"
+              class="block h-48 mb-5 p-2 text-sm text-gray-700 bg-white rounded-lg border border-gray-300 cursor-pointer focus:outline-none focus:border-blue-500 w-full"
+            ></textarea>
+            <button
+              id="submit-text"
+              disabled
+              class="bg-blue-500 disabled:bg-blue-200 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out mx-auto block"
+            >
+              Submit
+            </button>
+          </div>
+          <!-- Reviews section -->
+          <div class="mt-10">
+            <div id="reviews-container"></div>
+          </div>
+        </div>
+      </div>
+      <script type="module" src="./language-tasks-ai-extension.ts"></script>
+    </div>
+  </body>
+</html>

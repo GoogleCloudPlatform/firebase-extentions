@@ -1,0 +1,29 @@
+{
+  "name": "extensions-quickstart-js",
+  "version": "1.0.0",
+  "description": "Quickstarts for Firebase Extensions",
+  "main": "apps/index.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "vite build",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "extensions"
+  ],
+  "author": "Invertase",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "prettier": "^3.1.0",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "firebase": "^10.6.0"
+  }
+}

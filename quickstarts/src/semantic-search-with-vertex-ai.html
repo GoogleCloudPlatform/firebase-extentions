@@ -1,0 +1,61 @@
+<!doctype html>
+<!--
+Copyright (c) 2019 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase Extensions Example</title>
+    <link rel="stylesheet" href="./assets/index.css" />
+  </head>
+
+  <body class="flex justify-center items-center h-screen bg-gray-100">
+    <div class="text-center">
+      <div class="flex flex-col items-center">
+        <h1 class="text-3xl font-bold mb-9">Semantic Search with Vertex AI</h1>
+
+        <div class="w-full max-w-xs flex space-x-2">
+          <!-- Search Bar -->
+          <div>
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search..."
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker mb-2"
+            />
+            <!-- Search Results Container -->
+            <div
+              id="search-results"
+              class="flex-col bg-white text-left p-2 overflow-hidden transition-all duration-300 ease-in-out empty:h-0 empty:p-0"
+            >
+              <!-- Search results will be appended here -->
+            </div>
+          </div>
+          <div>
+            <button
+              id="search-btn"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./semantic-search-with-vertex-ai.ts"></script>
+  </body>
+</html>
