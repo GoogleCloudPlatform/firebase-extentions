@@ -43,6 +43,7 @@ export function onAuthenticatedCall<TData, TResponse>(
   return functions
     .runWith({
       enforceAppCheck: config.enforceAppCheck, // Requests without valid App Check tokens will be rejected.
+      consumeAppCheckToken: true,
     })
     .https.onCall(async (data, context) => {
       if (config.enforceAppCheck) {
