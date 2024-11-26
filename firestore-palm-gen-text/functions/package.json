@@ -13,7 +13,7 @@
     "@google-ai/generativelanguage": "^1.0.0",
     "@google-cloud/aiplatform": "^3.0.0",
     "@types/mustache": "^4.2.2",
-    "firebase-admin": "^11.5.0",
+    "firebase-admin": "^13.0.1",
     "firebase-functions": "^4.4.0",
     "google-auth-library": "^9.0.0",
     "mustache": "^4.2.0",
