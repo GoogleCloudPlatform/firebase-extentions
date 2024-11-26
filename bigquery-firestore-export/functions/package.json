@@ -19,13 +19,13 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@google-cloud/bigquery": "^6.1.0",
-    "@google-cloud/bigquery-data-transfer": "^3.2.1",
-    "@google-cloud/firestore": "^6.5.0",
+    "@google-cloud/bigquery-data-transfer": "^4.4.0",
+    "@google-cloud/firestore": "^7.10.0",
     "@types/express-serve-static-core": "4.17.30",
     "@types/jest": "^29.5.0",
     "@types/node": "14.18.34",
     "@types/nodemailer": "^6.2.1",
-    "firebase-admin": "^11.4.1",
+    "firebase-admin": "^13.0.1",
     "firebase-functions": "^4.3.1",
     "handlebars": "^4.5.3",
     "install": "^0.13.0",
@@ -37,7 +37,7 @@
     "typescript": "^4.7.4"
   },
   "devDependencies": {
-    "@google-cloud/pubsub": "^3.5.2",
+    "@google-cloud/pubsub": "^4.9.0",
     "@types/lodash.mapvalues": "^4.6.7",
     "concurrently": "^7.2.1",
     "dotenv": "^16.0.3",
