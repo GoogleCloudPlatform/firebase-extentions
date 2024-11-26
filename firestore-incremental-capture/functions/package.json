@@ -28,7 +28,7 @@
     "ts-jest": "^29.1.1"
   },
   "devDependencies": {
-    "@google-cloud/firestore": "^6.8.0",
+    "@google-cloud/firestore": "^7.10.0",
     "@google-cloud/precise-date": "^4.0.0",
     "@google-cloud/spanner": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
