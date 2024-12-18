@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AudioEncoding, SsmlVoiceGender} from './types';
+import { AudioEncoding, SsmlVoiceGender } from './types';
 
 interface Config {
   location: string;
@@ -29,18 +29,23 @@ interface Config {
   voiceName: string;
 }
 
+function parseBoolean(value?: string): boolean {
+  if (!value) return false; // Default to false if the value is undefined or empty
+  const normalized = value.trim().toLowerCase();
+  return normalized === 'true' || normalized === 'yes';
+}
+
 const config: Config = {
-  location: process.env.LOCATION,
-  collectionPath: process.env.COLLECTION_PATH,
-  ssml: process.env.SSML === 'yes',
-  languageCode: process.env.LANGUAGE_CODE,
+  location: process.env.LOCATION || '',
+  collectionPath: process.env.COLLECTION_PATH || '',
+  ssml: parseBoolean(process.env.ENABLE_SSML), // Use parseBoolean for flexible handling
+  languageCode: process.env.LANGUAGE_CODE || 'en-US',
   audioEncoding: process.env.AUDIO_ENCODING as unknown as AudioEncoding,
   ssmlGender: process.env.SSML_GENDER as unknown as SsmlVoiceGender,
-  bucketName: process.env.BUCKET_NAME,
-  storagePath: process.env.STORAGE_PATH,
-  enablePerDocumentOverrides:
-    process.env.ENABLE_PER_DOCUMENT_OVERRIDES === 'yes',
-  voiceName: process.env.VOICE_NAME,
+  bucketName: process.env.BUCKET_NAME || 'default-bucket',
+  storagePath: process.env.STORAGE_PATH || '',
+  enablePerDocumentOverrides: parseBoolean(process.env.ENABLE_PER_DOCUMENT_OVERRIDES),
+  voiceName: process.env.VOICE_NAME || '',
 };
 
 export default config;
